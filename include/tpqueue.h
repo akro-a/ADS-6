@@ -7,7 +7,7 @@
 
 //------------------------------------------------------------------------------
 // A singly‑linked list based priority queue.
-// Insertion:  O(n) – we scan for the right spot.
+// Insertion:  O(n) – we scan for the correct spot.
 // Removal:    O(1) – we always pop from the head.
 //------------------------------------------------------------------------------
 
@@ -26,7 +26,9 @@ class TPQueue {
     return *this;
   }
 
-  TPQueue(TPQueue&& other) noexcept : head_(other.head_) { other.head_ = nullptr; }
+  TPQueue(TPQueue&& other) noexcept : head_(other.head_) {
+    other.head_ = nullptr;
+  }
 
   TPQueue& operator=(TPQueue&& other) noexcept {
     if (this != &other) {
@@ -39,15 +41,15 @@ class TPQueue {
 
   ~TPQueue() { Clear(); }
 
-  //------------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
   // Public interface
-  //------------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
   bool empty() const { return head_ == nullptr; }
 
   void push(const T& value) {
     Node* new_node = new Node(value);
 
-    // Insert at the head if queue is empty or priority is higher than head.
+    // Insert at the head if queue is empty or priority is greater.
     if (empty() || value.prior > head_->data.prior) {
       new_node->next = head_;
       head_ = new_node;
@@ -56,7 +58,8 @@ class TPQueue {
 
     // Walk while next element has priority not less than the new one.
     Node* prev = head_;
-    while (prev->next != nullptr && prev->next->data.prior >= value.prior) {
+    while (prev->next != nullptr &&
+           prev->next->data.prior >= value.prior) {
       prev = prev->next;
     }
 
@@ -68,7 +71,7 @@ class TPQueue {
   // Removes and returns element with the highest priority.
   T pop() {
     if (empty()) {
-      return T{};  // For the purpose of laboratory tests we return default value.
+      return T{};  // Return default value if queue is empty.
     }
 
     Node* to_delete = head_;
